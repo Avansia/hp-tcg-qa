@@ -2,6 +2,7 @@
 <html lang="ja">
 <head>
   <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Harry Potter TCG Card + Q&A Viewer</title>
   <style>
     body { font-family: system-ui, sans-serif; padding: 16px; }
@@ -124,6 +125,46 @@
   }
 
   /* フィルタは縦並び */
+  .filters {
+    flex-direction: column;
+    width: 100%;
+  }
+}
+このコードはどこに追加すればいいの？
+
+@media (max-width: 600px) {
+
+  /* テーブルをカード型にする */
+  table, thead, tbody, th, td, tr {
+    display: block;
+  }
+
+  thead {
+    display: none;
+  }
+
+  tr {
+    margin-bottom: 12px;
+    border: 1px solid #ccc;
+    padding: 8px;
+    background: #fff;
+  }
+
+  td {
+    white-space: normal;
+    overflow: visible;
+    text-overflow: clip;
+    padding: 4px 0;
+  }
+
+  td::before {
+    content: attr(data-label);
+    font-weight: bold;
+    display: block;
+    margin-bottom: 2px;
+    color: #444;
+  }
+
   .filters {
     flex-direction: column;
     width: 100%;
