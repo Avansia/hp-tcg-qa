@@ -2,21 +2,22 @@
 <html lang="ja">
 <head>
   <meta charset="UTF-8">
-  <title>Harry Potter TCG Card Viewer</title>
+  <title>Harry Potter TCG Card + Q&A Viewer</title>
   <style>
     body { font-family: system-ui, sans-serif; padding: 16px; }
     input { padding: 6px 10px; width: 350px; margin-bottom: 12px; }
-    table { border-collapse: collapse; width: 100%; font-size: 14px; }
+    table { border-collapse: collapse; width: 100%; font-size: 14px; margin-bottom: 40px; }
     th, td { border: 1px solid #ccc; padding: 4px 6px; vertical-align: top; }
     th { background: #f0f0f0; position: sticky; top: 0; }
     tbody tr:nth-child(odd) { background: #fafafa; }
+    .qa-block { margin-left: 20px; padding: 6px; border-left: 3px solid #888; }
   </style>
 </head>
 <body>
-  <h1>Harry Potter TCG Card Viewer</h1>
-  <p>TSV: <code>HarryPotterTCG_DT.tsv</code> を読み込んで表示しています。</p>
+  <h1>Harry Potter TCG Card + Q&A Viewer</h1>
+  <p>カードデータと Q&A を統合して表示しています。</p>
 
-  <input id="search" type="text" placeholder="カード名・番号・効果テキストなどで検索">
+  <input id="search" type="text" placeholder="カード名・番号・効果テキスト・Q&A で検索">
 
   <table id="table">
     <thead>
@@ -31,89 +32,61 @@
         <th>タグ</th>
         <th>収録</th>
         <th>効果テキスト</th>
+        <th>Q&A</th>
       </tr>
     </thead>
     <tbody></tbody>
   </table>
 
   <script>
-    const TSV_URL = 'HarryPotterTCG_DT.tsv';
+    const CARD_TSV = 'HarryPotterTCG_DT.tsv';
+    const QA_TSV = 'HarryPotterTCG_QA.tsv';
 
-    async function loadTSV() {
-      const res = await fetch(TSV_URL);
+    async function loadTSV(url) {
+      const res = await fetch(url);
       const text = await res.text();
       const lines = text.trim().split(/\r?\n/);
-
-      let startIndex = 0;
-      if (lines[0].includes('カード名')) startIndex = 1;
-
-      const rows = [];
-      for (let i = startIndex; i < lines.length; i++) {
-        const cols = lines[i].split('\t');
-        if (cols.length < 10) continue;
-
-        rows.push({
-          name: cols[0],
-          number: cols[1],
-          rarity: cols[2],
-          cost: cols[3],
-          ap: cols[4],
-          dp: cols[5],
-          type: cols[6],
-          tags: cols[7],
-          product: cols[8],
-          text: cols[9]
-        });
-      }
-      return rows;
+      return lines.map(line => line.split('\t'));
     }
 
-    function renderTable(rows) {
+    async function loadData() {
+      const cardLines = await loadTSV(CARD_TSV);
+      const qaLines = await loadTSV(QA_TSV);
+
+      const cardHeader = cardLines[0];
+      const qaHeader = qaLines[0];
+
+      const cards = cardLines.slice(1).map(cols => ({
+        name: cols[0],
+        number: cols[1],
+        rarity: cols[2],
+        cost: cols[3],
+        ap: cols[4],
+        dp: cols[5],
+        type: cols[6],
+        tags: cols[7],
+        product: cols[8],
+        text: cols[9],
+        qas: []
+      }));
+
+      const qaList = qaLines.slice(1).map(cols => ({
+        name: cols[0],
+        number: cols[1],
+        qid: cols[2],
+        qa: cols[3],
+        updated: cols[4]
+      }));
+
+      for (const q of qaList) {
+        const card = cards.find(c => c.number === q.number);
+        if (card) card.qas.push(q);
+      }
+
+      return cards;
+    }
+
+    function renderTable(cards) {
       const tbody = document.querySelector('#table tbody');
       tbody.innerHTML = '';
 
-      for (const r of rows) {
-        const tr = document.createElement('tr');
-        tr.innerHTML = `
-          <td>${r.name}</td>
-          <td>${r.number}</td>
-          <td>${r.rarity}</td>
-          <td>${r.cost}</td>
-          <td>${r.ap}</td>
-          <td>${r.dp}</td>
-          <td>${r.type}</td>
-          <td>${r.tags}</td>
-          <td>${r.product}</td>
-          <td>${r.text}</td>
-        `;
-        tbody.appendChild(tr);
-      }
-    }
-
-    (async () => {
-      const allRows = await loadTSV();
-      renderTable(allRows);
-
-      const input = document.getElementById('search');
-      input.addEventListener('input', () => {
-        const q = input.value.toLowerCase();
-
-        const filtered = allRows.filter(r =>
-          r.name.toLowerCase().includes(q) ||
-          r.number.toLowerCase().includes(q) ||
-          r.rarity.toLowerCase().includes(q) ||
-          r.cost.toLowerCase().includes(q) ||
-          r.ap.toLowerCase().includes(q) ||
-          r.dp.toLowerCase().includes(q) ||
-          r.type.toLowerCase().includes(q) ||
-          r.tags.toLowerCase().includes(q) ||
-          r.product.toLowerCase().includes(q) ||
-          r.text.toLowerCase().includes(q)
-        );
-
-        renderTable(filtered);
-      });
-    })();
-  </script>
-</body>
-</html>
