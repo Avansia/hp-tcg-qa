@@ -24,7 +24,6 @@
       text-overflow: ellipsis;
     }
 
-    /* スマホ最適化 */
     @media (max-width: 600px) {
       table { font-size: 12px; }
       th, td { padding: 3px; }
@@ -63,7 +62,7 @@
     const CARD_TSV = 'HarryPotterTCG_DT.tsv';
     const QA_TSV = 'HarryPotterTCG_QA.tsv';
 
-    // ★ 収録名 → 短縮コード変換
+    // ★ 収録名 → 短縮コード
     function shortProductName(name) {
       if (name.includes("スターターデッキ／グリフィンドール")) return "S_G";
       if (name.includes("スターターデッキ／スリザリン")) return "S_S";
