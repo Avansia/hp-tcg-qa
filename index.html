@@ -75,101 +75,66 @@
       text-overflow: clip;
     }
 
-    /* 他の列は省略表示 */
+<style>
+
+  /* 他の列は省略表示 */
+  td {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  @media (max-width: 600px) {
+    table { font-size: 12px; }
+    th, td { padding: 3px; }
+    body { padding: 8px; }
+    input { width: 100%; }
+    table { display: block; overflow-x: auto; white-space: nowrap; }
+  }
+
+  /* ★ スマホ専用レイアウト（600px 以下） */
+  @media (max-width: 600px) {
+
+    /* テーブルをカード型にする */
+    table, thead, tbody, th, td, tr {
+      display: block;
+    }
+
+    thead {
+      display: none; /* ヘッダー非表示 */
+    }
+
+    tr {
+      margin-bottom: 12px;
+      border: 1px solid #ccc;
+      padding: 8px;
+      background: #fff;
+    }
+
     td {
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
+      white-space: normal;
+      overflow: visible;
+      text-overflow: clip;
+      padding: 4px 0;
     }
 
-    @media (max-width: 600px) {
-      table { font-size: 12px; }
-      th, td { padding: 3px; }
-      body { padding: 8px; }
-      input { width: 100%; }
-      table { display: block; overflow-x: auto; white-space: nowrap; }
+    /* 各項目にラベルを付ける */
+    td::before {
+      content: attr(data-label);
+      font-weight: bold;
+      display: block;
+      margin-bottom: 2px;
+      color: #444;
     }
-    /* ★ スマホ専用レイアウト（600px 以下） */
-@media (max-width: 600px) {
 
-  /* テーブルをカード型にする */
-  table, thead, tbody, th, td, tr {
-    display: block;
+    /* フィルタは縦並び */
+    .filters {
+      flex-direction: column;
+      width: 100%;
+    }
   }
 
-  thead {
-    display: none; /* ヘッダー非表示 */
-  }
-
-  tr {
-    margin-bottom: 12px;
-    border: 1px solid #ccc;
-    padding: 8px;
-    background: #fff;
-  }
-
-  td {
-    white-space: normal;
-    overflow: visible;
-    text-overflow: clip;
-    padding: 4px 0;
-  }
-
-  /* 各項目にラベルを付ける */
-  td::before {
-    content: attr(data-label);
-    font-weight: bold;
-    display: block;
-    margin-bottom: 2px;
-    color: #444;
-  }
-
-  /* フィルタは縦並び */
-  .filters {
-    flex-direction: column;
-    width: 100%;
-  }
-}
-このコードはどこに追加すればいいの？
-
-@media (max-width: 600px) {
-
-  /* テーブルをカード型にする */
-  table, thead, tbody, th, td, tr {
-    display: block;
-  }
-
-  thead {
-    display: none;
-  }
-
-  tr {
-    margin-bottom: 12px;
-    border: 1px solid #ccc;
-    padding: 8px;
-    background: #fff;
-  }
-
-  td {
-    white-space: normal;
-    overflow: visible;
-    text-overflow: clip;
-    padding: 4px 0;
-  }
-
-  td::before {
-    content: attr(data-label);
-    font-weight: bold;
-    display: block;
-    margin-bottom: 2px;
-    color: #444;
-  }
-
-  .filters {
-    flex-direction: column;
-    width: 100%;
-  }
-}
+</style>
 
   </style>
 </head>
