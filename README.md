@@ -20,4 +20,4 @@ Ver.1.0（2026/04/29 更新）
 
 【更新履歴】
 ・2026/04/29：初版公開（Part.1 + Starter）
-<img width="145" height="343" alt="image" src="https://github.com/user-attachments/assets/6fee6b14-a089-489a-b717-c6df68e07927" />
+
