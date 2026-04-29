@@ -17,6 +17,13 @@
     summary { cursor: pointer; font-weight: bold; }
     .qa-text { margin-left: 10px; padding: 4px; }
 
+    td {
+      max-width: 160px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
     /* スマホ最適化 */
     @media (max-width: 600px) {
       table { font-size: 12px; }
@@ -44,9 +51,9 @@
         <th data-key="dp">DP</th>
         <th data-key="type">タイプ</th>
         <th data-key="tags">タグ</th>
-        <th data-key="product">収録</th>
         <th data-key="text">効果テキスト</th>
         <th>Q&A</th>
+        <th data-key="product">収録</th>
       </tr>
     </thead>
     <tbody></tbody>
@@ -55,6 +62,15 @@
   <script>
     const CARD_TSV = 'HarryPotterTCG_DT.tsv';
     const QA_TSV = 'HarryPotterTCG_QA.tsv';
+
+    // ★ 収録名 → 短縮コード変換
+    function shortProductName(name) {
+      if (name.includes("スターターデッキ／グリフィンドール")) return "S_G";
+      if (name.includes("スターターデッキ／スリザリン")) return "S_S";
+      if (name.includes("ブースターパック")) return "B_P1";
+      if (name.includes("マスターズ・グリンドルバルド")) return "M_P1";
+      return name;
+    }
 
     async function loadTSV(url) {
       const res = await fetch(url);
@@ -121,9 +137,9 @@
           <td>${c.dp}</td>
           <td>${c.type}</td>
           <td>${c.tags}</td>
-          <td>${c.product}</td>
           <td>${c.text}</td>
           <td>${qaHtml}</td>
+          <td title="${c.product}">${shortProductName(c.product)}</td>
         `;
 
         tbody.appendChild(tr);
