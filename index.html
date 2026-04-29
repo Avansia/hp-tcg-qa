@@ -10,7 +10,9 @@
     th, td { border: 1px solid #ccc; padding: 4px 6px; vertical-align: top; }
     th { background: #f0f0f0; position: sticky; top: 0; }
     tbody tr:nth-child(odd) { background: #fafafa; }
-    .qa-block { margin: 6px 0 6px 10px; padding: 6px; border-left: 3px solid #888; }
+    details { margin: 4px 0; }
+    summary { cursor: pointer; font-weight: bold; }
+    .qa-text { margin-left: 10px; padding: 4px; }
   </style>
 </head>
 <body>
@@ -91,11 +93,10 @@
 
         const qaHtml = c.qas.length
           ? c.qas.map(q => `
-              <div class="qa-block">
-                <b>Q${q.qid}</b><br>
-                ${q.qa}<br>
-                <small>更新日: ${q.updated}</small>
-              </div>
+              <details>
+                <summary>Q${q.qid}（更新日: ${q.updated}）</summary>
+                <div class="qa-text">${q.qa}</div>
+              </details>
             `).join('')
           : '—';
 
