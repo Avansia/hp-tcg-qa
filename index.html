@@ -10,7 +10,7 @@
     th, td { border: 1px solid #ccc; padding: 4px 6px; vertical-align: top; }
     th { background: #f0f0f0; position: sticky; top: 0; }
     tbody tr:nth-child(odd) { background: #fafafa; }
-    .qa-block { margin-left: 20px; padding: 6px; border-left: 3px solid #888; }
+    .qa-block { margin: 6px 0 6px 10px; padding: 6px; border-left: 3px solid #888; }
   </style>
 </head>
 <body>
@@ -45,16 +45,12 @@
     async function loadTSV(url) {
       const res = await fetch(url);
       const text = await res.text();
-      const lines = text.trim().split(/\r?\n/);
-      return lines.map(line => line.split('\t'));
+      return text.trim().split(/\r?\n/).map(line => line.split('\t'));
     }
 
     async function loadData() {
       const cardLines = await loadTSV(CARD_TSV);
       const qaLines = await loadTSV(QA_TSV);
-
-      const cardHeader = cardLines[0];
-      const qaHeader = qaLines[0];
 
       const cards = cardLines.slice(1).map(cols => ({
         name: cols[0],
