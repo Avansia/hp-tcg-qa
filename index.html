@@ -88,6 +88,48 @@
       input { width: 100%; }
       table { display: block; overflow-x: auto; white-space: nowrap; }
     }
+    /* ★ スマホ専用レイアウト（600px 以下） */
+@media (max-width: 600px) {
+
+  /* テーブルをカード型にする */
+  table, thead, tbody, th, td, tr {
+    display: block;
+  }
+
+  thead {
+    display: none; /* ヘッダー非表示 */
+  }
+
+  tr {
+    margin-bottom: 12px;
+    border: 1px solid #ccc;
+    padding: 8px;
+    background: #fff;
+  }
+
+  td {
+    white-space: normal;
+    overflow: visible;
+    text-overflow: clip;
+    padding: 4px 0;
+  }
+
+  /* 各項目にラベルを付ける */
+  td::before {
+    content: attr(data-label);
+    font-weight: bold;
+    display: block;
+    margin-bottom: 2px;
+    color: #444;
+  }
+
+  /* フィルタは縦並び */
+  .filters {
+    flex-direction: column;
+    width: 100%;
+  }
+}
+
   </style>
 </head>
 <body>
@@ -262,19 +304,20 @@
           : '—';
 
         const tr = document.createElement('tr');
-        tr.innerHTML = `
-          <td>${c.name}</td>
-          <td>${c.number}</td>
-          <td>${c.rarity}</td>
-          <td>${c.cost}</td>
-          <td>${c.ap}</td>
-          <td>${c.dp}</td>
-          <td>${c.type}</td>
-          <td>${c.tags}</td>
-          <td>${c.text}</td>
-          <td>${qaHtml}</td>
-          <td title="${c.product}">${shortProductName(c.product)}</td>
-        `;
+tr.innerHTML = `
+  <td data-label="カード名">${c.name}</td>
+  <td data-label="No.">${c.number}</td>
+  <td data-label="Rt">${c.rarity}</td>
+  <td data-label="Ct">${c.cost}</td>
+  <td data-label="AP">${c.ap}</td>
+  <td data-label="DP">${c.dp}</td>
+  <td data-label="タイプ">${c.type}</td>
+  <td data-label="タグ">${c.tags}</td>
+  <td data-label="効果テキスト">${c.text}</td>
+  <td data-label="Q&A">${qaHtml}</td>
+  <td data-label="収録">${shortProductName(c.product)}</td>
+`;
+
         tbody.appendChild(tr);
       }
     }
