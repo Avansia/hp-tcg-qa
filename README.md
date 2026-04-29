@@ -1,2 +1,2 @@
 # hp-tcg-qa
-Harry Potter カードゲームの公式Q&amp;Aリスト（非公式まとめ）
+Harry Potter カードゲームの公式リスト（非公式まとめ）
