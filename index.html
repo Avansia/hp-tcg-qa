@@ -7,15 +7,15 @@
     body { font-family: system-ui, sans-serif; padding: 16px; }
     input { padding: 6px 10px; width: 90%; max-width: 350px; margin-bottom: 12px; }
 
-table {
-  border-collapse: collapse;
-  width: auto;        /* ← ここを 100% から auto に */
-  max-width: 100%;    /* ← はみ出し防止用に追加 */
-  font-size: 14px;
-  margin-bottom: 40px;
-  table-layout: fixed; /* 列幅指定はそのまま活かす */
-}
-
+    /* ★ 列幅が変わらない固定レイアウト */
+    table {
+      border-collapse: collapse;
+      width: auto;        /* ← 100% をやめて列幅を尊重 */
+      max-width: 100%;    /* ← はみ出し防止 */
+      font-size: 14px;
+      margin-bottom: 40px;
+      table-layout: fixed;
+    }
 
     th, td { border: 1px solid #ccc; padding: 4px 6px; vertical-align: top; }
 
@@ -49,24 +49,26 @@ table {
 
     /* ★ 列幅最適化 */
     th:nth-child(1), td:nth-child(1) { width: 140px; } /* カード名 */
-    th:nth-child(2), td:nth-child(2) { width: 40px; }  /* カード番号 */
-    th:nth-child(3), td:nth-child(3) { width: 40px; }  /* レアリティ */
-    th:nth-child(4), td:nth-child(4) { width: 40px; }  /* コスト */
-    th:nth-child(5), td:nth-child(5) { width: 40px; }  /* AP */
-    th:nth-child(6), td:nth-child(6) { width: 40px; }  /* DP */
+    th:nth-child(2), td:nth-child(2) { width: 80px; }  /* カード番号 */
+    th:nth-child(3), td:nth-child(3) { width: 60px; }  /* レアリティ */
+    th:nth-child(4), td:nth-child(4) { width: 50px; }  /* コスト */
+    th:nth-child(5), td:nth-child(5) { width: 50px; }  /* AP */
+    th:nth-child(6), td:nth-child(6) { width: 50px; }  /* DP */
     th:nth-child(7), td:nth-child(7) { width: 90px; }  /* タイプ */
     th:nth-child(8), td:nth-child(8) { width: 120px; } /* タグ */
     th:nth-child(9), td:nth-child(9) { width: 300px; } /* 効果テキスト */
     th:nth-child(10), td:nth-child(10) { width: 120px; } /* Q&A */
     th:nth-child(11), td:nth-child(11) { width: 60px; } /* 収録 */
-/* Q&A のみ折り返しを許可して横幅を固定 */
-td:nth-child(10) details,
-td:nth-child(10) .qa-text {
-  white-space: normal !important;
-  overflow: visible;
-  text-overflow: clip;
-}
-    /* 省略表示 */
+
+    /* ★ Q&A だけ折り返しを許可（横幅を壊さない） */
+    td:nth-child(10) details,
+    td:nth-child(10) .qa-text {
+      white-space: normal !important;
+      overflow: visible;
+      text-overflow: clip;
+    }
+
+    /* 他の列は省略表示 */
     td {
       white-space: nowrap;
       overflow: hidden;
@@ -109,8 +111,8 @@ td:nth-child(10) .qa-text {
       <tr>
         <th data-key="name">カード名</th>
         <th data-key="number">カード番号</th>
-        <th data-key="rarity">Rt</th>
-        <th data-key="cost">Ct</th>
+        <th data-key="rarity">レアリティ</th>
+        <th data-key="cost">コスト</th>
         <th data-key="ap">AP</th>
         <th data-key="dp">DP</th>
         <th data-key="type">タイプ</th>
