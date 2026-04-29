@@ -7,14 +7,15 @@
     body { font-family: system-ui, sans-serif; padding: 16px; }
     input { padding: 6px 10px; width: 90%; max-width: 350px; margin-bottom: 12px; }
 
-    /* ★ 列幅が変わらない固定レイアウト */
-    table {
-      border-collapse: collapse;
-      width: 100%;
-      font-size: 14px;
-      margin-bottom: 40px;
-      table-layout: fixed;
-    }
+table {
+  border-collapse: collapse;
+  width: auto;        /* ← ここを 100% から auto に */
+  max-width: 100%;    /* ← はみ出し防止用に追加 */
+  font-size: 14px;
+  margin-bottom: 40px;
+  table-layout: fixed; /* 列幅指定はそのまま活かす */
+}
+
 
     th, td { border: 1px solid #ccc; padding: 4px 6px; vertical-align: top; }
 
