@@ -98,14 +98,6 @@ td:nth-child(10) {
 /* ★ スマホ専用レイアウト（600px 以下） */
 @media (max-width: 600px) {
 
-  /* スマホ向け基本調整（必要なら残す） */
-  table { font-size: 12px; }
-  th, td { padding: 3px; }
-  body { padding: 8px; }
-  input { width: 100%; }
-
-  /* --- ここから現代風カードレイアウト --- */
-
   table {
     width: 100%;
     border: none;
@@ -138,10 +130,17 @@ td:nth-child(10) {
     color: #444;
   }
 
-  /* 効果テキスト・Q&A は1列にまとめる */
-  td[data-label="効果テキスト"],
+  /* 効果テキストは1列 */
+  td[data-label="効果テキスト"] {
+    grid-column: 1 / -1;
+    display: block;
+    margin-top: 8px;
+  }
+
+  /* ★ Q&A も1列で独立させる（左に来ない） */
   td[data-label="Q&A"] {
     grid-column: 1 / -1;
+    display: block;
     margin-top: 8px;
   }
 
@@ -150,6 +149,7 @@ td:nth-child(10) {
     width: 100%;
   }
 }
+
 
 
   </style>
