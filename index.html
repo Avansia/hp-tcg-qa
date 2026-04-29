@@ -11,11 +11,12 @@
     .filters {
       display: flex;
       flex-wrap: wrap;
-      gap: 10px;
-      margin-bottom: 15px;
+      gap: 8px;
+      margin-bottom: 12px;
     }
     .filters select {
       padding: 4px 6px;
+      font-size: 12px;
     }
 
     /* ★ 列幅が変わらない固定レイアウト */
@@ -54,11 +55,11 @@
 
     /* ★ 列幅最適化 */
     th:nth-child(1), td:nth-child(1) { width: 140px; }
-    th:nth-child(2), td:nth-child(2) { width: 80px; }
-    th:nth-child(3), td:nth-child(3) { width: 60px; }
-    th:nth-child(4), td:nth-child(4) { width: 50px; }
-    th:nth-child(5), td:nth-child(5) { width: 50px; }
-    th:nth-child(6), td:nth-child(6) { width: 50px; }
+    th:nth-child(2), td:nth-child(2) { width: 60px; }
+    th:nth-child(3), td:nth-child(3) { width: 40px; }
+    th:nth-child(4), td:nth-child(4) { width: 40px; }
+    th:nth-child(5), td:nth-child(5) { width: 40px; }
+    th:nth-child(6), td:nth-child(6) { width: 40px; }
     th:nth-child(7), td:nth-child(7) { width: 90px; }
     th:nth-child(8), td:nth-child(8) { width: 120px; }
     th:nth-child(9), td:nth-child(9) { width: 300px; }
@@ -93,38 +94,25 @@
 
   <h1>Harry Potter TCG Card + Q&A Viewer</h1>
 
-  <!-- ★ フィルタ UI -->
+  <!-- ★ フィルタ -->
   <div class="filters">
-    <select id="filter-rarity">
-      <option value="">レアリティ（全て）</option>
-    </select>
-
-    <select id="filter-cost">
-      <option value="">コスト（全て）</option>
-    </select>
-
-    <select id="filter-type">
-      <option value="">タイプ（全て）</option>
-    </select>
-
-    <select id="filter-tag">
-      <option value="">タグ（全て）</option>
-    </select>
-
-    <select id="filter-product">
-      <option value="">収録（全て）</option>
-    </select>
+    <select id="filter-rarity"><option value="">Rt: 全て</option></select>
+    <select id="filter-cost"><option value="">Ct: 全て</option></select>
+    <select id="filter-type"><option value="">タイプ: 全て</option></select>
+    <select id="filter-tag"><option value="">タグ: 全て</option></select>
+    <select id="filter-product"><option value="">収録: 全て</option></select>
   </div>
 
+  <!-- ★ 検索 -->
   <input id="search" type="text" placeholder="カード名・番号・効果テキスト・Q&A で検索">
 
   <table id="table">
     <thead>
       <tr>
         <th data-key="name">カード名</th>
-        <th data-key="number">カード番号</th>
-        <th data-key="rarity">レアリティ</th>
-        <th data-key="cost">コスト</th>
+        <th data-key="number">No.</th>
+        <th data-key="rarity">Rt</th>
+        <th data-key="cost">Ct</th>
         <th data-key="ap">AP</th>
         <th data-key="dp">DP</th>
         <th data-key="type">タイプ</th>
@@ -189,6 +177,7 @@
       return cards;
     }
 
+    /* ★ フィルタ項目を自動生成 */
     function populateFilters(cards) {
       const raritySet = new Set();
       const costSet = new Set();
@@ -204,7 +193,7 @@
         productSet.add(shortProductName(c.product));
       });
 
-      function fillSelect(id, values) {
+      function fill(id, values) {
         const sel = document.getElementById(id);
         [...values].sort().forEach(v => {
           const op = document.createElement("option");
@@ -214,13 +203,14 @@
         });
       }
 
-      fillSelect("filter-rarity", raritySet);
-      fillSelect("filter-cost", costSet);
-      fillSelect("filter-type", typeSet);
-      fillSelect("filter-tag", tagSet);
-      fillSelect("filter-product", productSet);
+      fill("filter-rarity", raritySet);
+      fill("filter-cost", costSet);
+      fill("filter-type", typeSet);
+      fill("filter-tag", tagSet);
+      fill("filter-product", productSet);
     }
 
+    /* ★ フィルタ適用 */
     function applyFilters(cards) {
       const r = document.getElementById("filter-rarity").value;
       const c = document.getElementById("filter-cost").value;
@@ -256,13 +246,12 @@
       });
     }
 
+    /* ★ テーブル描画 */
     function renderTable(cards) {
       const tbody = document.querySelector('#table tbody');
       tbody.innerHTML = '';
 
       for (const c of cards) {
-        const tr = document.createElement('tr');
-
         const qaHtml = c.qas.length
           ? c.qas.map(q => `
               <details>
@@ -272,6 +261,7 @@
             `).join('')
           : '—';
 
+        const tr = document.createElement('tr');
         tr.innerHTML = `
           <td>${c.name}</td>
           <td>${c.number}</td>
@@ -285,50 +275,45 @@
           <td>${qaHtml}</td>
           <td title="${c.product}">${shortProductName(c.product)}</td>
         `;
-
         tbody.appendChild(tr);
       }
     }
 
+    /* ★ メイン処理 */
     (async () => {
       let cards = await loadData();
       populateFilters(cards);
       renderTable(cards);
 
-      /* ★ フィルタイベント */
+      /* フィルタ変更 */
       document.querySelectorAll(".filters select").forEach(sel => {
         sel.addEventListener("change", () => {
           renderTable(applyFilters(cards));
         });
       });
 
-      /* ★ 検索 */
+      /* 検索 */
       document.getElementById("search").addEventListener("input", () => {
         renderTable(applyFilters(cards));
       });
 
-      /* ★ ソート */
+      /* ソート */
       let sortState = {};
       document.querySelectorAll('th[data-key]').forEach(th => {
         th.addEventListener('click', () => {
           const key = th.dataset.key;
-
           sortState[key] = !sortState[key];
 
           document.querySelectorAll('th[data-key]').forEach(h => {
             h.classList.remove('sort-asc', 'sort-desc');
           });
-
           th.classList.add(sortState[key] ? 'sort-asc' : 'sort-desc');
 
           cards.sort((a, b) => {
-            let A = a[key];
-            let B = b[key];
+            let A = a[key], B = b[key];
 
             if (["cost", "ap", "dp"].includes(key)) {
-              A = Number(A);
-              B = Number(B);
-              return sortState[key] ? A - B : B - A;
+              return sortState[key] ? Number(A) - Number(B) : Number(B) - Number(A);
             }
 
             if (key === "number") {
