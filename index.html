@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <title>Harry Potter TCG Q&A Viewer</title>
+  <style>
+    body { font-family: system-ui, sans-serif; padding: 16px; }
+    input { padding: 4px 8px; width: 300px; margin-bottom: 12px; }
+    table { border-collapse: collapse; width: 100%; font-size: 14px; }
+    th, td { border: 1px solid #ccc; padding: 4px 6px; vertical-align: top; }
+    th { background: #f0f0f0; position: sticky; top: 0; }
+    tbody tr:nth-child(odd) { background: #fafafa; }
+  </style>
+</head>
+<body>
+  <h1>Harry Potter TCG Q&A Viewer</h1>
+  <p>TSV: <code>HarryPotterTCG_DT.tsv</code> を読み込んで表示しています。</p>
+
+  <input id="search" type="text" placeholder="カード名・番号・Q&Aでフィルタ">
+  <table id="table">
+    <thead>
+      <tr>
+        <th>カード名</th>
+        <th>カード番号</th>
+        <th>Q番号</th>
+        <th>Q&A</th>
+        <th>更新日</th>
+      </tr>
+    </thead>
+    <tbody></tbody>
+  </table>
+
+  <script>
+    const TSV_URL = 'HarryPotterTCG_DT.tsv';
+
+    async function loadTSV() {
+      const res = await fetch(TSV_URL);
+      const text = await res.text();
+      const lines = text.trim().split(/\r?\n/);
+
+      // 1行目がヘッダならスキップ（なければ 0 から）
+      let startIndex = 0;
+      if (lines[0].includes('CardName') || lines[0].includes('カード名')) {
+        startIndex = 1;
+      }
+
+      const rows = [];
+      for (let i = startIndex; i < lines.length; i++) {
+        const cols = lines[i].split('\t');
+        if (cols.length < 5) continue;
+        rows.push({
+          cardName: cols[0],
+          cardNumber: cols[1],
+          qNumber: cols[2],
+          qa: cols[3],
+          updatedAt: cols[4]
+        });
+      }
+      return rows;
+    }
+
+    function renderTable(rows) {
+      const tbody = document.querySelector('#table tbody');
+      tbody.innerHTML = '';
+      for (const r of rows) {
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+          <td>${r.cardName}</td>
+          <td>${r.cardNumber}</td>
+          <td>${r.qNumber}</td>
+          <td>${r.qa}</td>
+          <td>${r.updatedAt}</td>
+        `;
+        tbody.appendChild(tr);
+      }
+    }
+
+    (async () => {
+      const allRows = await loadTSV();
+      renderTable(allRows);
+
+      const input = document.getElementById('search');
+      input.addEventListener('input', () => {
+        const q = input.value.toLowerCase();
+        const filtered = allRows.filter(r =>
+          r.cardName.toLowerCase().includes(q) ||
+          r.cardNumber.toLowerCase().includes(q) ||
+          r.qa.toLowerCase().includes(q)
+        );
+        renderTable(filtered);
+      });
+    })();
+  </script>
+</body>
+</html>
