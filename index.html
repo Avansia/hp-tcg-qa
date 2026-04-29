@@ -7,11 +7,22 @@
     body { font-family: system-ui, sans-serif; padding: 16px; }
     input { padding: 6px 10px; width: 90%; max-width: 350px; margin-bottom: 12px; }
 
+    /* ★ フィルタ UI */
+    .filters {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-bottom: 15px;
+    }
+    .filters select {
+      padding: 4px 6px;
+    }
+
     /* ★ 列幅が変わらない固定レイアウト */
     table {
       border-collapse: collapse;
-      width: auto;        /* ← 100% をやめて列幅を尊重 */
-      max-width: 100%;    /* ← はみ出し防止 */
+      width: auto;
+      max-width: 100%;
       font-size: 14px;
       margin-bottom: 40px;
       table-layout: fixed;
@@ -29,18 +40,12 @@
     th:hover { background: #e0e0e0; }
 
     th::after {
-      content: " ▲";       /* ダミー矢印で幅を確保 */
-      font-size: 12px;
-      visibility: hidden;   /* 最初は見えない */
-    }
-    th.sort-asc::after {
       content: " ▲";
-      visibility: visible;
+      font-size: 12px;
+      visibility: hidden;
     }
-    th.sort-desc::after {
-      content: " ▼";
-      visibility: visible;
-    }
+    th.sort-asc::after { content: " ▲"; visibility: visible; }
+    th.sort-desc::after { content: " ▼"; visibility: visible; }
 
     tbody tr:nth-child(odd) { background: #fafafa; }
     details { margin: 4px 0; }
@@ -48,19 +53,19 @@
     .qa-text { margin-left: 10px; padding: 4px; }
 
     /* ★ 列幅最適化 */
-    th:nth-child(1), td:nth-child(1) { width: 140px; } /* カード名 */
-    th:nth-child(2), td:nth-child(2) { width: 60px; }  /* カード番号 */
-    th:nth-child(3), td:nth-child(3) { width: 40px; }  /* レアリティ */
-    th:nth-child(4), td:nth-child(4) { width: 40px; }  /* コスト */
-    th:nth-child(5), td:nth-child(5) { width: 40px; }  /* AP */
-    th:nth-child(6), td:nth-child(6) { width: 40px; }  /* DP */
-    th:nth-child(7), td:nth-child(7) { width: 90px; }  /* タイプ */
-    th:nth-child(8), td:nth-child(8) { width: 120px; } /* タグ */
-    th:nth-child(9), td:nth-child(9) { width: 300px; } /* 効果テキスト */
-    th:nth-child(10), td:nth-child(10) { width: 120px; } /* Q&A */
-    th:nth-child(11), td:nth-child(11) { width: 60px; } /* 収録 */
+    th:nth-child(1), td:nth-child(1) { width: 140px; }
+    th:nth-child(2), td:nth-child(2) { width: 80px; }
+    th:nth-child(3), td:nth-child(3) { width: 60px; }
+    th:nth-child(4), td:nth-child(4) { width: 50px; }
+    th:nth-child(5), td:nth-child(5) { width: 50px; }
+    th:nth-child(6), td:nth-child(6) { width: 50px; }
+    th:nth-child(7), td:nth-child(7) { width: 90px; }
+    th:nth-child(8), td:nth-child(8) { width: 120px; }
+    th:nth-child(9), td:nth-child(9) { width: 300px; }
+    th:nth-child(10), td:nth-child(10) { width: 120px; }
+    th:nth-child(11), td:nth-child(11) { width: 60px; }
 
-    /* ★ Q&A だけ折り返しを許可（横幅を壊さない） */
+    /* ★ Q&A だけ折り返し */
     td:nth-child(10) details,
     td:nth-child(10) .qa-text {
       white-space: normal !important;
@@ -75,7 +80,6 @@
       text-overflow: ellipsis;
     }
 
-    /* スマホ最適化 */
     @media (max-width: 600px) {
       table { font-size: 12px; }
       th, td { padding: 3px; }
@@ -86,22 +90,30 @@
   </style>
 </head>
 <body>
+
   <h1>Harry Potter TCG Card + Q&A Viewer</h1>
 
-  <!-- ★ 説明エリア -->
-  <div style="margin-bottom: 20px; padding: 10px; background: #f7f7f7; border: 1px solid #ddd;">
-    <strong>■ 省略記号について</strong><br>
-    収録名は短縮コードで表示しています：<br>
-    ・S_G = スターターデッキ／グリフィンドール<br>
-    ・S_S = スターターデッキ／スリザリン<br>
-    ・B_P1 = ブースターパック Part1<br>
-    ・M_P1 = マスターズ・グリンドルバルド Part1<br>
-    （※マウスを乗せると元の収録名が表示されます）<br><br>
+  <!-- ★ フィルタ UI -->
+  <div class="filters">
+    <select id="filter-rarity">
+      <option value="">レアリティ（全て）</option>
+    </select>
 
-    <strong>■ ソートの使い方</strong><br>
-    ・列名（AP、コスト、カード番号など）をクリックすると並び替えできます。<br>
-    ・▲ は昇順、▼ は降順を表します。<br>
-    ・クリックするたびに昇順 ⇄ 降順が切り替わります。
+    <select id="filter-cost">
+      <option value="">コスト（全て）</option>
+    </select>
+
+    <select id="filter-type">
+      <option value="">タイプ（全て）</option>
+    </select>
+
+    <select id="filter-tag">
+      <option value="">タグ（全て）</option>
+    </select>
+
+    <select id="filter-product">
+      <option value="">収録（全て）</option>
+    </select>
   </div>
 
   <input id="search" type="text" placeholder="カード名・番号・効果テキスト・Q&A で検索">
@@ -110,9 +122,9 @@
     <thead>
       <tr>
         <th data-key="name">カード名</th>
-        <th data-key="number">No.</th>
-        <th data-key="rarity">Rt</th>
-        <th data-key="cost">Ct</th>
+        <th data-key="number">カード番号</th>
+        <th data-key="rarity">レアリティ</th>
+        <th data-key="cost">コスト</th>
         <th data-key="ap">AP</th>
         <th data-key="dp">DP</th>
         <th data-key="type">タイプ</th>
@@ -129,7 +141,6 @@
     const CARD_TSV = 'HarryPotterTCG_DT.tsv';
     const QA_TSV = 'HarryPotterTCG_QA.tsv';
 
-    /* ★ 収録名 → 短縮コード */
     function shortProductName(name) {
       if (name.includes("スターターデッキ／グリフィンドール")) return "S_G";
       if (name.includes("スターターデッキ／スリザリン")) return "S_S";
@@ -178,6 +189,73 @@
       return cards;
     }
 
+    function populateFilters(cards) {
+      const raritySet = new Set();
+      const costSet = new Set();
+      const typeSet = new Set();
+      const tagSet = new Set();
+      const productSet = new Set();
+
+      cards.forEach(c => {
+        raritySet.add(c.rarity);
+        costSet.add(c.cost);
+        typeSet.add(c.type);
+        c.tags.split("／").forEach(t => tagSet.add(t.trim()));
+        productSet.add(shortProductName(c.product));
+      });
+
+      function fillSelect(id, values) {
+        const sel = document.getElementById(id);
+        [...values].sort().forEach(v => {
+          const op = document.createElement("option");
+          op.value = v;
+          op.textContent = v;
+          sel.appendChild(op);
+        });
+      }
+
+      fillSelect("filter-rarity", raritySet);
+      fillSelect("filter-cost", costSet);
+      fillSelect("filter-type", typeSet);
+      fillSelect("filter-tag", tagSet);
+      fillSelect("filter-product", productSet);
+    }
+
+    function applyFilters(cards) {
+      const r = document.getElementById("filter-rarity").value;
+      const c = document.getElementById("filter-cost").value;
+      const t = document.getElementById("filter-type").value;
+      const g = document.getElementById("filter-tag").value;
+      const p = document.getElementById("filter-product").value;
+      const q = document.getElementById("search").value.toLowerCase();
+
+      return cards.filter(card => {
+        if (r && card.rarity !== r) return false;
+        if (c && card.cost !== c) return false;
+        if (t && card.type !== t) return false;
+        if (g && !card.tags.includes(g)) return false;
+        if (p && shortProductName(card.product) !== p) return false;
+
+        if (q) {
+          const hit =
+            card.name.toLowerCase().includes(q) ||
+            card.number.toLowerCase().includes(q) ||
+            card.rarity.toLowerCase().includes(q) ||
+            card.cost.toLowerCase().includes(q) ||
+            card.ap.toLowerCase().includes(q) ||
+            card.dp.toLowerCase().includes(q) ||
+            card.type.toLowerCase().includes(q) ||
+            card.tags.toLowerCase().includes(q) ||
+            card.product.toLowerCase().includes(q) ||
+            card.text.toLowerCase().includes(q) ||
+            card.qas.some(qa => qa.qa.toLowerCase().includes(q));
+          if (!hit) return false;
+        }
+
+        return true;
+      });
+    }
+
     function renderTable(cards) {
       const tbody = document.querySelector('#table tbody');
       tbody.innerHTML = '';
@@ -214,26 +292,19 @@
 
     (async () => {
       let cards = await loadData();
+      populateFilters(cards);
       renderTable(cards);
 
+      /* ★ フィルタイベント */
+      document.querySelectorAll(".filters select").forEach(sel => {
+        sel.addEventListener("change", () => {
+          renderTable(applyFilters(cards));
+        });
+      });
+
       /* ★ 検索 */
-      const input = document.getElementById('search');
-      input.addEventListener('input', () => {
-        const q = input.value.toLowerCase();
-        const filtered = cards.filter(c =>
-          c.name.toLowerCase().includes(q) ||
-          c.number.toLowerCase().includes(q) ||
-          c.rarity.toLowerCase().includes(q) ||
-          c.cost.toLowerCase().includes(q) ||
-          c.ap.toLowerCase().includes(q) ||
-          c.dp.toLowerCase().includes(q) ||
-          c.type.toLowerCase().includes(q) ||
-          c.tags.toLowerCase().includes(q) ||
-          c.product.toLowerCase().includes(q) ||
-          c.text.toLowerCase().includes(q) ||
-          c.qas.some(qa => qa.qa.toLowerCase().includes(q))
-        );
-        renderTable(filtered);
+      document.getElementById("search").addEventListener("input", () => {
+        renderTable(applyFilters(cards));
       });
 
       /* ★ ソート */
@@ -271,7 +342,7 @@
               : B.localeCompare(A, 'ja');
           });
 
-          renderTable(cards);
+          renderTable(applyFilters(cards));
         });
       });
     })();
