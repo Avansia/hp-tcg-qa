@@ -59,7 +59,13 @@ table {
     th:nth-child(9), td:nth-child(9) { width: 300px; } /* 効果テキスト */
     th:nth-child(10), td:nth-child(10) { width: 120px; } /* Q&A */
     th:nth-child(11), td:nth-child(11) { width: 60px; } /* 収録 */
-
+/* Q&A のみ折り返しを許可して横幅を固定 */
+td:nth-child(10) details,
+td:nth-child(10) .qa-text {
+  white-space: normal !important;
+  overflow: visible;
+  text-overflow: clip;
+}
     /* 省略表示 */
     td {
       white-space: nowrap;
