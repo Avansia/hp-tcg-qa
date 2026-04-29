@@ -151,27 +151,41 @@
         renderTable(filtered);
       });
 
-      // ソート
-      let sortState = {};
-      document.querySelectorAll('th[data-key]').forEach(th => {
-        th.addEventListener('click', () => {
-          const key = th.dataset.key;
-          sortState[key] = !sortState[key];
+// ソート
+let sortState = {};
+document.querySelectorAll('th[data-key]').forEach(th => {
+  th.addEventListener('click', () => {
+    const key = th.dataset.key;
+    sortState[key] = !sortState[key];
 
-          cards.sort((a, b) => {
-            const A = a[key];
-            const B = b[key];
+    cards.sort((a, b) => {
+      let A = a[key];
+      let B = b[key];
 
-            // 数値ソート
-            if (!isNaN(A) && !isNaN(B)) {
-              return sortState[key] ? A - B : B - A;
-            }
+      // 数値項目は数値に変換
+      if (["cost", "ap", "dp"].includes(key)) {
+        A = Number(A);
+        B = Number(B);
+        return sortState[key] ? A - B : B - A;
+      }
 
-            // 文字列ソート
-            return sortState[key]
-              ? A.localeCompare(B, 'ja')
-              : B.localeCompare(A, 'ja');
-          });
+      // カード番号は 01-001 のような形式 → 数値化して比較
+      if (key === "number") {
+        const numA = Number(A.replace(/[^0-9]/g, ""));
+        const numB = Number(B.replace(/[^0-9]/g, ""));
+        return sortState[key] ? numA - numB : numB - numA;
+      }
+
+      // 文字列ソート
+      return sortState[key]
+        ? A.localeCompare(B, 'ja')
+        : B.localeCompare(A, 'ja');
+    });
+
+    renderTable(cards);
+  });
+});
+
 
           renderTable(cards);
         });
