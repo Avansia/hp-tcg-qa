@@ -16,9 +16,23 @@
 
     th, td { border: 1px solid #ccc; padding: 4px 6px; vertical-align: top; }
     th { background: #f0f0f0; cursor: pointer; position: relative; user-select: none; }
+    th::after {
+  content: " ▲";      /* ダミーの矢印 */
+  font-size: 12px;
+  visibility: hidden; /* 最初は見えないだけで、幅は確保される */
+}
     th:hover { background: #e0e0e0; }
-    th.sort-asc::after { content: " ▲"; font-size: 12px; }
-    th.sort-desc::after { content: " ▼"; font-size: 12px; }
+/* 昇順のときだけ表示 */
+th.sort-asc::after {
+  content: " ▲";
+  visibility: visible;
+}
+
+/* 降順のときだけ表示 */
+th.sort-desc::after {
+  content: " ▼";
+  visibility: visible;
+}
     tbody tr:nth-child(odd) { background: #fafafa; }
     details { margin: 4px 0; }
     summary { cursor: pointer; font-weight: bold; }
