@@ -2,10 +2,10 @@
 <html lang="ja">
 <head>
   <meta charset="UTF-8">
-  <title>Harry Potter TCG Q&A Viewer</title>
+  <title>Harry Potter TCG Card Viewer</title>
   <style>
     body { font-family: system-ui, sans-serif; padding: 16px; }
-    input { padding: 4px 8px; width: 300px; margin-bottom: 12px; }
+    input { padding: 6px 10px; width: 350px; margin-bottom: 12px; }
     table { border-collapse: collapse; width: 100%; font-size: 14px; }
     th, td { border: 1px solid #ccc; padding: 4px 6px; vertical-align: top; }
     th { background: #f0f0f0; position: sticky; top: 0; }
@@ -13,18 +13,24 @@
   </style>
 </head>
 <body>
-  <h1>Harry Potter TCG Q&A Viewer</h1>
+  <h1>Harry Potter TCG Card Viewer</h1>
   <p>TSV: <code>HarryPotterTCG_DT.tsv</code> を読み込んで表示しています。</p>
 
-  <input id="search" type="text" placeholder="カード名・番号・Q&Aでフィルタ">
+  <input id="search" type="text" placeholder="カード名・番号・効果テキストなどで検索">
+
   <table id="table">
     <thead>
       <tr>
         <th>カード名</th>
         <th>カード番号</th>
-        <th>Q番号</th>
-        <th>Q&A</th>
-        <th>更新日</th>
+        <th>レアリティ</th>
+        <th>コスト</th>
+        <th>AP</th>
+        <th>DP</th>
+        <th>タイプ</th>
+        <th>タグ</th>
+        <th>収録</th>
+        <th>効果テキスト</th>
       </tr>
     </thead>
     <tbody></tbody>
@@ -38,22 +44,25 @@
       const text = await res.text();
       const lines = text.trim().split(/\r?\n/);
 
-      // 1行目がヘッダならスキップ（なければ 0 から）
       let startIndex = 0;
-      if (lines[0].includes('CardName') || lines[0].includes('カード名')) {
-        startIndex = 1;
-      }
+      if (lines[0].includes('カード名')) startIndex = 1;
 
       const rows = [];
       for (let i = startIndex; i < lines.length; i++) {
         const cols = lines[i].split('\t');
-        if (cols.length < 5) continue;
+        if (cols.length < 10) continue;
+
         rows.push({
-          cardName: cols[0],
-          cardNumber: cols[1],
-          qNumber: cols[2],
-          qa: cols[3],
-          updatedAt: cols[4]
+          name: cols[0],
+          number: cols[1],
+          rarity: cols[2],
+          cost: cols[3],
+          ap: cols[4],
+          dp: cols[5],
+          type: cols[6],
+          tags: cols[7],
+          product: cols[8],
+          text: cols[9]
         });
       }
       return rows;
@@ -62,14 +71,20 @@
     function renderTable(rows) {
       const tbody = document.querySelector('#table tbody');
       tbody.innerHTML = '';
+
       for (const r of rows) {
         const tr = document.createElement('tr');
         tr.innerHTML = `
-          <td>${r.cardName}</td>
-          <td>${r.cardNumber}</td>
-          <td>${r.qNumber}</td>
-          <td>${r.qa}</td>
-          <td>${r.updatedAt}</td>
+          <td>${r.name}</td>
+          <td>${r.number}</td>
+          <td>${r.rarity}</td>
+          <td>${r.cost}</td>
+          <td>${r.ap}</td>
+          <td>${r.dp}</td>
+          <td>${r.type}</td>
+          <td>${r.tags}</td>
+          <td>${r.product}</td>
+          <td>${r.text}</td>
         `;
         tbody.appendChild(tr);
       }
@@ -82,11 +97,20 @@
       const input = document.getElementById('search');
       input.addEventListener('input', () => {
         const q = input.value.toLowerCase();
+
         const filtered = allRows.filter(r =>
-          r.cardName.toLowerCase().includes(q) ||
-          r.cardNumber.toLowerCase().includes(q) ||
-          r.qa.toLowerCase().includes(q)
+          r.name.toLowerCase().includes(q) ||
+          r.number.toLowerCase().includes(q) ||
+          r.rarity.toLowerCase().includes(q) ||
+          r.cost.toLowerCase().includes(q) ||
+          r.ap.toLowerCase().includes(q) ||
+          r.dp.toLowerCase().includes(q) ||
+          r.type.toLowerCase().includes(q) ||
+          r.tags.toLowerCase().includes(q) ||
+          r.product.toLowerCase().includes(q) ||
+          r.text.toLowerCase().includes(q)
         );
+
         renderTable(filtered);
       });
     })();
