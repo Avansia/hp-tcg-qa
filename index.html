@@ -8,7 +8,10 @@
     input { padding: 6px 10px; width: 90%; max-width: 350px; margin-bottom: 12px; }
     table { border-collapse: collapse; width: 100%; font-size: 14px; margin-bottom: 40px; }
     th, td { border: 1px solid #ccc; padding: 4px 6px; vertical-align: top; }
-    th { background: #f0f0f0; cursor: pointer; }
+    th { background: #f0f0f0; cursor: pointer; position: relative; user-select: none; }
+    th:hover { background: #e0e0e0; }
+    th.sort-asc::after { content: " ▲"; font-size: 12px; }
+    th.sort-desc::after { content: " ▼"; font-size: 12px; }
     tbody tr:nth-child(odd) { background: #fafafa; }
     details { margin: 4px 0; }
     summary { cursor: pointer; font-weight: bold; }
@@ -22,25 +25,6 @@
       input { width: 100%; }
       table { display: block; overflow-x: auto; white-space: nowrap; }
     }
-    th {
-  position: relative;
-  user-select: none;
-}
-
-th:hover {
-  background: #e0e0e0;
-}
-
-th.sort-asc::after {
-  content: " ▲";
-  font-size: 12px;
-}
-
-th.sort-desc::after {
-  content: " ▼";
-  font-size: 12px;
-}
-
   </style>
 </head>
 <body>
@@ -170,52 +154,40 @@ th.sort-desc::after {
         renderTable(filtered);
       });
 
-// ソート
-let sortState = {};
-document.querySelectorAll('th[data-key]').forEach(th => {
-  th.addEventListener('click', () => {
-    const key = th.dataset.key;
+      // ソート
+      let sortState = {};
+      document.querySelectorAll('th[data-key]').forEach(th => {
+        th.addEventListener('click', () => {
+          const key = th.dataset.key;
 
-    // 状態切り替え
-    sortState[key] = !sortState[key];
+          sortState[key] = !sortState[key];
 
-    // 全ヘッダーの矢印をリセット
-    document.querySelectorAll('th[data-key]').forEach(h => {
-      h.classList.remove('sort-asc', 'sort-desc');
-    });
+          document.querySelectorAll('th[data-key]').forEach(h => {
+            h.classList.remove('sort-asc', 'sort-desc');
+          });
 
-    // 今クリックした列に矢印を付ける
-    th.classList.add(sortState[key] ? 'sort-asc' : 'sort-desc');
+          th.classList.add(sortState[key] ? 'sort-asc' : 'sort-desc');
 
-    cards.sort((a, b) => {
-      let A = a[key];
-      let B = b[key];
+          cards.sort((a, b) => {
+            let A = a[key];
+            let B = b[key];
 
-      // 数値項目
-      if (["cost", "ap", "dp"].includes(key)) {
-        A = Number(A);
-        B = Number(B);
-        return sortState[key] ? A - B : B - A;
-      }
+            if (["cost", "ap", "dp"].includes(key)) {
+              A = Number(A);
+              B = Number(B);
+              return sortState[key] ? A - B : B - A;
+            }
 
-      // カード番号（01-001 → 0001001 のように数値化）
-      if (key === "number") {
-        const numA = Number(A.replace(/[^0-9]/g, ""));
-        const numB = Number(B.replace(/[^0-9]/g, ""));
-        return sortState[key] ? numA - numB : numB - numA;
-      }
+            if (key === "number") {
+              const numA = Number(A.replace(/[^0-9]/g, ""));
+              const numB = Number(B.replace(/[^0-9]/g, ""));
+              return sortState[key] ? numA - numB : numB - numA;
+            }
 
-      // 文字列ソート
-      return sortState[key]
-        ? A.localeCompare(B, 'ja')
-        : B.localeCompare(A, 'ja');
-    });
-
-    renderTable(cards);
-  });
-});
-
-
+            return sortState[key]
+              ? A.localeCompare(B, 'ja')
+              : B.localeCompare(A, 'ja');
+          });
 
           renderTable(cards);
         });
