@@ -90,3 +90,62 @@
       const tbody = document.querySelector('#table tbody');
       tbody.innerHTML = '';
 
+      for (const c of cards) {
+        const tr = document.createElement('tr');
+
+        const qaHtml = c.qas.length
+          ? c.qas.map(q => `
+              <div class="qa-block">
+                <b>Q${q.qid}</b><br>
+                ${q.qa}<br>
+                <small>更新日: ${q.updated}</small>
+              </div>
+            `).join('')
+          : '—';
+
+        tr.innerHTML = `
+          <td>${c.name}</td>
+          <td>${c.number}</td>
+          <td>${c.rarity}</td>
+          <td>${c.cost}</td>
+          <td>${c.ap}</td>
+          <td>${c.dp}</td>
+          <td>${c.type}</td>
+          <td>${c.tags}</td>
+          <td>${c.product}</td>
+          <td>${c.text}</td>
+          <td>${qaHtml}</td>
+        `;
+
+        tbody.appendChild(tr);
+      }
+    }
+
+    (async () => {
+      const cards = await loadData();
+      renderTable(cards);
+
+      const input = document.getElementById('search');
+      input.addEventListener('input', () => {
+        const q = input.value.toLowerCase();
+
+        const filtered = cards.filter(c =>
+          c.name.toLowerCase().includes(q) ||
+          c.number.toLowerCase().includes(q) ||
+          c.rarity.toLowerCase().includes(q) ||
+          c.cost.toLowerCase().includes(q) ||
+          c.ap.toLowerCase().includes(q) ||
+          c.dp.toLowerCase().includes(q) ||
+          c.type.toLowerCase().includes(q) ||
+          c.tags.toLowerCase().includes(q) ||
+          c.product.toLowerCase().includes(q) ||
+          c.text.toLowerCase().includes(q) ||
+          c.qas.some(qa => qa.qa.toLowerCase().includes(q))
+        );
+
+        renderTable(filtered);
+      });
+    })();
+  </script>
+</body>
+</html>
