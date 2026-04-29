@@ -27,7 +27,6 @@
       max-width: 100%;
       font-size: 14px;
       margin-bottom: 40px;
-      table-layout: fixed;
     }
 
     th, td { border: 1px solid #ccc; padding: 4px 6px; vertical-align: top; }
@@ -77,70 +76,75 @@
 
 <style>
 
-/* 他の列は省略表示（PC用） */
-td {
+/* PC用：省略表示したい列だけ nowrap */
+td:nth-child(1),
+td:nth-child(2),
+td:nth-child(3),
+td:nth-child(4),
+td:nth-child(5),
+td:nth-child(6),
+td:nth-child(7),
+td:nth-child(11) {
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
 }
-
+/* 効果テキスト・Q&A は折り返し */
+td:nth-child(9),
+td:nth-child(10) {
+  white-space: normal;
+}
+    
 /* ★ スマホ専用レイアウト（600px 以下） */
 @media (max-width: 600px) {
 
-  /* 全体の基本調整 */
+  /* スマホ向け基本調整（必要なら残す） */
   table { font-size: 12px; }
   th, td { padding: 3px; }
   body { padding: 8px; }
   input { width: 100%; }
 
-  /* テーブルをカード型にする */
-  table, thead, tbody, th, td, tr {
-    display: block;
+  /* --- ここから現代風カードレイアウト --- */
+
+  table {
+    width: 100%;
+    border: none;
   }
 
   thead {
-    display: none; /* ヘッダー非表示 */
+    display: none;
   }
 
   tr {
-    margin-bottom: 12px;
-    border: 1px solid #ccc;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 6px 10px;
     padding: 12px;
-    background: #fff;
+    margin-bottom: 14px;
     border-radius: 10px;
+    background: #fff;
     box-shadow: 0 2px 6px rgba(0,0,0,0.15);
   }
 
   td {
+    display: contents;
     white-space: normal;
     overflow: visible;
-    text-overflow: clip;
-    padding: 6px 0;
-    display: flex;
-    justify-content: space-between;
   }
 
-  /* 各項目にラベルを付ける */
   td::before {
     content: attr(data-label);
     font-weight: bold;
     color: #444;
-    flex: 0 0 40%;
   }
 
-  /* 効果テキスト・Q&A はブロック表示 */
+  /* 効果テキスト・Q&A は1列にまとめる */
   td[data-label="効果テキスト"],
   td[data-label="Q&A"] {
-    display: block;
+    grid-column: 1 / -1;
     margin-top: 8px;
   }
 
-  td[data-label="効果テキスト"]::before,
-  td[data-label="Q&A"]::before {
-    margin-bottom: 4px;
-  }
-
-  /* フィルタは縦並び */
   .filters {
     flex-direction: column;
     width: 100%;
