@@ -5,14 +5,23 @@
   <title>Harry Potter TCG Card + Q&A Viewer</title>
   <style>
     body { font-family: system-ui, sans-serif; padding: 16px; }
-    input { padding: 6px 10px; width: 350px; margin-bottom: 12px; }
+    input { padding: 6px 10px; width: 90%; max-width: 350px; margin-bottom: 12px; }
     table { border-collapse: collapse; width: 100%; font-size: 14px; margin-bottom: 40px; }
     th, td { border: 1px solid #ccc; padding: 4px 6px; vertical-align: top; }
-    th { background: #f0f0f0; position: sticky; top: 0; }
+    th { background: #f0f0f0; cursor: pointer; }
     tbody tr:nth-child(odd) { background: #fafafa; }
     details { margin: 4px 0; }
     summary { cursor: pointer; font-weight: bold; }
     .qa-text { margin-left: 10px; padding: 4px; }
+
+    /* スマホ最適化 */
+    @media (max-width: 600px) {
+      table { font-size: 12px; }
+      th, td { padding: 3px; }
+      body { padding: 8px; }
+      input { width: 100%; }
+      table { display: block; overflow-x: auto; white-space: nowrap; }
+    }
   </style>
 </head>
 <body>
@@ -24,16 +33,16 @@
   <table id="table">
     <thead>
       <tr>
-        <th>カード名</th>
-        <th>カード番号</th>
-        <th>レアリティ</th>
-        <th>コスト</th>
-        <th>AP</th>
-        <th>DP</th>
-        <th>タイプ</th>
-        <th>タグ</th>
-        <th>収録</th>
-        <th>効果テキスト</th>
+        <th data-key="name">カード名</th>
+        <th data-key="number">カード番号</th>
+        <th data-key="rarity">レアリティ</th>
+        <th data-key="cost">コスト</th>
+        <th data-key="ap">AP</th>
+        <th data-key="dp">DP</th>
+        <th data-key="type">タイプ</th>
+        <th data-key="tags">タグ</th>
+        <th data-key="product">収録</th>
+        <th data-key="text">効果テキスト</th>
         <th>Q&A</th>
       </tr>
     </thead>
@@ -119,13 +128,13 @@
     }
 
     (async () => {
-      const cards = await loadData();
+      let cards = await loadData();
       renderTable(cards);
 
+      // 検索
       const input = document.getElementById('search');
       input.addEventListener('input', () => {
         const q = input.value.toLowerCase();
-
         const filtered = cards.filter(c =>
           c.name.toLowerCase().includes(q) ||
           c.number.toLowerCase().includes(q) ||
@@ -139,8 +148,33 @@
           c.text.toLowerCase().includes(q) ||
           c.qas.some(qa => qa.qa.toLowerCase().includes(q))
         );
-
         renderTable(filtered);
+      });
+
+      // ソート
+      let sortState = {};
+      document.querySelectorAll('th[data-key]').forEach(th => {
+        th.addEventListener('click', () => {
+          const key = th.dataset.key;
+          sortState[key] = !sortState[key];
+
+          cards.sort((a, b) => {
+            const A = a[key];
+            const B = b[key];
+
+            // 数値ソート
+            if (!isNaN(A) && !isNaN(B)) {
+              return sortState[key] ? A - B : B - A;
+            }
+
+            // 文字列ソート
+            return sortState[key]
+              ? A.localeCompare(B, 'ja')
+              : B.localeCompare(A, 'ja');
+          });
+
+          renderTable(cards);
+        });
       });
     })();
   </script>
