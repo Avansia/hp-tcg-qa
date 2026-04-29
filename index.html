@@ -22,6 +22,25 @@
       input { width: 100%; }
       table { display: block; overflow-x: auto; white-space: nowrap; }
     }
+    th {
+  position: relative;
+  user-select: none;
+}
+
+th:hover {
+  background: #e0e0e0;
+}
+
+th.sort-asc::after {
+  content: " ▲";
+  font-size: 12px;
+}
+
+th.sort-desc::after {
+  content: " ▼";
+  font-size: 12px;
+}
+
   </style>
 </head>
 <body>
@@ -156,20 +175,30 @@ let sortState = {};
 document.querySelectorAll('th[data-key]').forEach(th => {
   th.addEventListener('click', () => {
     const key = th.dataset.key;
+
+    // 状態切り替え
     sortState[key] = !sortState[key];
+
+    // 全ヘッダーの矢印をリセット
+    document.querySelectorAll('th[data-key]').forEach(h => {
+      h.classList.remove('sort-asc', 'sort-desc');
+    });
+
+    // 今クリックした列に矢印を付ける
+    th.classList.add(sortState[key] ? 'sort-asc' : 'sort-desc');
 
     cards.sort((a, b) => {
       let A = a[key];
       let B = b[key];
 
-      // 数値項目は数値に変換
+      // 数値項目
       if (["cost", "ap", "dp"].includes(key)) {
         A = Number(A);
         B = Number(B);
         return sortState[key] ? A - B : B - A;
       }
 
-      // カード番号は 01-001 のような形式 → 数値化して比較
+      // カード番号（01-001 → 0001001 のように数値化）
       if (key === "number") {
         const numA = Number(A.replace(/[^0-9]/g, ""));
         const numB = Number(B.replace(/[^0-9]/g, ""));
@@ -185,6 +214,7 @@ document.querySelectorAll('th[data-key]').forEach(th => {
     renderTable(cards);
   });
 });
+
 
 
           renderTable(cards);
