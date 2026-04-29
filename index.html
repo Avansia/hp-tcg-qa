@@ -77,64 +77,76 @@
 
 <style>
 
-  /* 他の列は省略表示 */
+/* 他の列は省略表示（PC用） */
+td {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* ★ スマホ専用レイアウト（600px 以下） */
+@media (max-width: 600px) {
+
+  /* 全体の基本調整 */
+  table { font-size: 12px; }
+  th, td { padding: 3px; }
+  body { padding: 8px; }
+  input { width: 100%; }
+
+  /* テーブルをカード型にする */
+  table, thead, tbody, th, td, tr {
+    display: block;
+  }
+
+  thead {
+    display: none; /* ヘッダー非表示 */
+  }
+
+  tr {
+    margin-bottom: 12px;
+    border: 1px solid #ccc;
+    padding: 12px;
+    background: #fff;
+    border-radius: 10px;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+  }
+
   td {
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
+    white-space: normal;
+    overflow: visible;
+    text-overflow: clip;
+    padding: 6px 0;
+    display: flex;
+    justify-content: space-between;
   }
 
-  @media (max-width: 600px) {
-    table { font-size: 12px; }
-    th, td { padding: 3px; }
-    body { padding: 8px; }
-    input { width: 100%; }
-    table { display: block; overflow-x: auto; white-space: nowrap; }
+  /* 各項目にラベルを付ける */
+  td::before {
+    content: attr(data-label);
+    font-weight: bold;
+    color: #444;
+    flex: 0 0 40%;
   }
 
-  /* ★ スマホ専用レイアウト（600px 以下） */
-  @media (max-width: 600px) {
-
-    /* テーブルをカード型にする */
-    table, thead, tbody, th, td, tr {
-      display: block;
-    }
-
-    thead {
-      display: none; /* ヘッダー非表示 */
-    }
-
-    tr {
-      margin-bottom: 12px;
-      border: 1px solid #ccc;
-      padding: 8px;
-      background: #fff;
-    }
-
-    td {
-      white-space: normal;
-      overflow: visible;
-      text-overflow: clip;
-      padding: 4px 0;
-    }
-
-    /* 各項目にラベルを付ける */
-    td::before {
-      content: attr(data-label);
-      font-weight: bold;
-      display: block;
-      margin-bottom: 2px;
-      color: #444;
-    }
-
-    /* フィルタは縦並び */
-    .filters {
-      flex-direction: column;
-      width: 100%;
-    }
+  /* 効果テキスト・Q&A はブロック表示 */
+  td[data-label="効果テキスト"],
+  td[data-label="Q&A"] {
+    display: block;
+    margin-top: 8px;
   }
 
-</style>
+  td[data-label="効果テキスト"]::before,
+  td[data-label="Q&A"]::before {
+    margin-bottom: 4px;
+  }
+
+  /* フィルタは縦並び */
+  .filters {
+    flex-direction: column;
+    width: 100%;
+  }
+}
+
 
   </style>
 </head>
